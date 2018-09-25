@@ -151,106 +151,10 @@ function setupPush(){
         }
 }
 
-/*function onPushClick (msg){     // will work in iOS and in // ANDROID go ONLY here
-    var all_msg = [];
-    var message = '';
-    //alert(msg.payload);
-    if (msg && msg.payload) {
-        var parsedPayload = isJsonString(msg.payload);
-        
-        if (parsedPayload) {
-            message = parsedPayload;
-        }else{
-            message = msg.payload;
-        }
-        //alert(typeof(message));
-        if(typeof(message)=='string'){
-            var testArr = message.split("payload");
-            //alert(testArr);
-            //alert(JSON.stringify(testArr));
-            //alert(testArr[1]);
-            if (testArr && testArr[1]) {
-                message = testArr[1].slice(2).slice(0, -1);
-                message = isJsonString(message);
-            }            
-        } 
-        if (message) {
-            all_msg.push(message);
-        }
-    }
-    if (all_msg.length > 0) {
-        var container = $$('body');
-        if (container.children('.progressbar, .progressbar-infinite').length) return; //don't run all this if there is a current progressbar loading
-        App.showProgressbar(container); 
-
-        loginTimer = setInterval(function() {
-                //alert(loginDone);
-                if (loginDone) {
-                    clearInterval(loginTimer);
-                    setTimeout(function(){
-                        //alert('before processClickOnPushNotification');
-                         processClickOnPushNotification(all_msg); 
-                         App.hideProgressbar(container);               
-                    },1000); 
-                }
-            }, 1000);   
-    }
-
-}
-
-function onPushRecieve( msg ){      //will work in android    and iOS - if in foreground    
-    var osName = plus.os.name.toLowerCase();  
-      
-    switch ( osName ) {
-        case "android":
-            var all_msg = plus.push.getAllMessage();
-            if (all_msg === null || all_msg.length === 0) {
-                var message = {};
-                all_msg = [];
-                message.payload = msg.payload;                     
-                all_msg.push(message);
-            }
-            if (all_msg) {
-                var popped = all_msg.pop();
-                all_msg = [];                
-                all_msg.push(popped);
-                
-                //setNotificationList(all_msg); 
-
-                loginTimer = setInterval(function() {
-                        if (loginDone) {
-                            clearInterval(loginTimer);                                    
-                            setTimeout(function(){
-                                processClickOnPushNotification(all_msg);
-                            },1000);
-                        }
-                    }, 1000); 
-            }
-        break;
-
-        case "ios":
-            //if (appPaused) {
-                if (!isJsonString(msg)) {                
-                    if (msg.aps) {
-                        var payload = JSON.stringify(msg.payload); 
-                        if (localPushLastPayload != payload) {
-                            localPushLastPayload = payload;
-                            plus.push.createMessage(msg.content, payload, {cover:false} );
-                        } 
-                    }                    
-                }
-            //}      
-        break;
-        default:
-        // other
-        break;
-    }       
-}*/
-
 function onAppPause(){ 
-    if ($hub) {
+    /*if ($hub) {
         $hub.stop();
-    }
+    }*/
 } 
 function onAppResume(){    
     if (localStorage.ACCOUNT && localStorage.PASSWORD) {
@@ -258,9 +162,9 @@ function onAppResume(){
         getNewData();
     }
    
-    if ($hub) {
+    /*if ($hub) {
         $hub.start();
-    } 
+    } */
 }  
 
  
@@ -276,7 +180,7 @@ function backFix(event){
     } 
 }
 
-function webSockConnect(){    
+/*function webSockConnect(){    
     var MinorToken = getUserinfo().MinorToken;
     var deviceToken = !localStorage.PUSH_DEVICE_TOKEN? '111' : localStorage.PUSH_DEVICE_TOKEN;
     $hub = hubHelper({ url :"http://api.Quikdata.co:8088/",
@@ -291,10 +195,7 @@ function webSockConnect(){
         },
         receiveNotice: function(msg){
             
-            /*if (!inBrowser) {                
-                plus.push.clear();
-            }  */          
-            //alert('websocket msg received');
+            
             console.log(msg);
             var objMsg = isJsonString(msg);      
             if ( objMsg ) {
@@ -310,22 +211,13 @@ function webSockConnect(){
                 }                
                 getNewNotifications();
 
-                /*var page = App.getCurrentView().activePage;        
-                if ( page.name != "notification" ) {
-                    $$('.notification_button').addClass('new_not');
-                    showMsgNotification(all_msg);
-                    
-                }else if(deviceType == "web"){
-                    showNotification(all_msg);
-                }*/
-               // showMsgNotification(all_msg);
             }
                 
         }
     });
             
     $hub.start();
-}
+}*/
 
 // Initialize your app
 var App = new Framework7({
@@ -2530,9 +2422,9 @@ function clearUserInfo(){
     var pushList = getNotificationList();
     
     localStorage.clear(); 
-    if ($hub) {
+    /*if ($hub) {
         $hub.stop();  
-    }  
+    } */ 
     if(window.plus) {
         plus.push.clear();
     }
@@ -2651,7 +2543,7 @@ function login(){
                
                 //init_AssetList(); 
                 //initSearchbar();
-                webSockConnect();  
+               /* webSockConnect();  */
                 getNewNotifications();
                 
                 App.closeModal();                
