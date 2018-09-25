@@ -152,9 +152,9 @@ function setupPush(){
 }
 
 function onAppPause(){ 
-    if ($hub) {
+    /*if ($hub) {
         $hub.stop();
-    }
+    }*/
 } 
 function onAppResume(){    
     if (localStorage.ACCOUNT && localStorage.PASSWORD) {
@@ -162,9 +162,9 @@ function onAppResume(){
         getNewData();
     }
    
-    if ($hub) {
+    /*if ($hub) {
         $hub.start();
-    } 
+    } */
 }  
 
  
@@ -180,7 +180,7 @@ function backFix(event){
     } 
 }
 
-function webSockConnect(){    
+/*function webSockConnect(){    
     var MinorToken = getUserinfo().MinorToken;
     var deviceToken = !localStorage.PUSH_DEVICE_TOKEN? '111' : localStorage.PUSH_DEVICE_TOKEN;
     $hub = hubHelper({ url :"http://api.Quikdata.co:8088/",
@@ -195,10 +195,7 @@ function webSockConnect(){
         },
         receiveNotice: function(msg){
             
-            /*if (!inBrowser) {                
-                plus.push.clear();
-            }  */          
-            //alert('websocket msg received');
+            
             console.log(msg);
             var objMsg = isJsonString(msg);      
             if ( objMsg ) {
@@ -214,22 +211,13 @@ function webSockConnect(){
                 }                
                 getNewNotifications();
 
-                /*var page = App.getCurrentView().activePage;        
-                if ( page.name != "notification" ) {
-                    $$('.notification_button').addClass('new_not');
-                    showMsgNotification(all_msg);
-                    
-                }else if(deviceType == "web"){
-                    showNotification(all_msg);
-                }*/
-               // showMsgNotification(all_msg);
             }
                 
         }
     });
             
     $hub.start();
-}
+}*/
 
 // Initialize your app
 var App = new Framework7({
@@ -2434,9 +2422,9 @@ function clearUserInfo(){
     var pushList = getNotificationList();
     
     localStorage.clear(); 
-    if ($hub) {
+    /*if ($hub) {
         $hub.stop();  
-    }  
+    } */ 
     if(window.plus) {
         plus.push.clear();
     }
@@ -2555,7 +2543,7 @@ function login(){
                
                 //init_AssetList(); 
                 //initSearchbar();
-                webSockConnect();  
+               /* webSockConnect();  */
                 getNewNotifications();
                 
                 App.closeModal();                
