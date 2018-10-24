@@ -40,7 +40,7 @@ function getPlusInfo(){
 var inBrowser = 0;
 var notificationChecked = 0;
 var loginTimer = 0;
-var loginDone = 0;
+localStorage.loginDone = 0;
 //var appPaused = 0;
 
 var loginInterval = null;
@@ -59,6 +59,9 @@ function onDeviceReady(){
     if (window.MobileAccessibility) {
         window.MobileAccessibility.usePreferredTextZoom(false);    
     }
+    if (StatusBar) {
+        StatusBar.styleDefault();
+    } 
 
     setupPush();
 
@@ -128,33 +131,51 @@ function setupPush(){
             }
             else if (data && data.additionalData && data.additionalData.payload){
                //if user NOT using app and push notification comes
-                var container = $$('body');
-                if (container.children('.progressbar, .progressbar-infinite').length) return; //don't run all this if there is a current progressbar loading
-                App.showProgressbar(container); 
+                App.showIndicator();
                
                 loginTimer = setInterval(function() {
-                    //alert(loginDone);
-                    if (loginDone) {
+                    //alert(calStorage.loginDone);
+                    if (localStorage.loginDone) {
                         clearInterval(loginTimer);
                         setTimeout(function(){
                             //alert('before processClickOnPushNotification');
                             processClickOnPushNotification([data.additionalData.payload]);
-                            App.hideProgressbar(container);               
+                            App.hideIndicator(); 
                         },1000); 
                     }
                 }, 1000); 
             }
+            if (device && device.platform && device.platform.toLowerCase() == 'ios') {
+                push.finish(
+                    () => {
+                      console.log('processing of push data is finished');
+                    },
+                    () => {
+                      console.log(
+                        'something went wrong with push.finish for ID =',
+                        data.additionalData.notId
+                      );
+                    },
+                    data.additionalData.notId
+                );
+            }
+                
         });
 
         if　(!localStorage.ACCOUNT){
-            push.clearAllNotifications();
+            push.clearAllNotifications(
+                () => {
+                  console.log('success');
+                },
+                () => {
+                  console.log('error');
+                }
+            );
         }
 }
 
 function onAppPause(){ 
-    /*if ($hub) {
-        $hub.stop();
-    }*/
+
 } 
 function onAppResume(){    
     if (localStorage.ACCOUNT && localStorage.PASSWORD) {
@@ -162,9 +183,7 @@ function onAppResume(){
         getNewData();
     }
    
-    /*if ($hub) {
-        $hub.start();
-    } */
+
 }  
 
  
@@ -563,9 +582,9 @@ $$('body').on('click', 'a.external', function(event) {
 });
 
 $$('body').on('change keyup input click', '.only_numbers', function(){
-    if (this.value.match(/[^0-9]/g)) {
-	     this.value = this.value.replace(/[^0-9]/g, '');
-	}
+    if (this.value.match(/[^0-9-]/g)) {
+         this.value = this.value.replace(/[^0-9-]/g, '');
+    }
 });
 
 /*$$('body').on('click', '.navbar_title, .navbar_title_index', function(){
@@ -2422,12 +2441,8 @@ function clearUserInfo(){
     var pushList = getNotificationList();
     
     localStorage.clear(); 
-    /*if ($hub) {
-        $hub.stop();  
-    } */ 
-    if(window.plus) {
-        plus.push.clear();
-    }
+
+  
 
     if (updateAssetsPosInfoTimer) {
         clearInterval(updateAssetsPosInfoTimer);
@@ -4339,7 +4354,7 @@ function setAssetListPosInfo(listObj){
     };
     //console.log(url);    
     //console.log(data);
-    loginDone = 0;
+    localStorage.loginDone = 0;
     JSON1.requestPost(url,data, function(result){   
             console.log(result);                       
             if (result.MajorCode == '000') {
@@ -4367,9 +4382,9 @@ function setAssetListPosInfo(listObj){
             }
             init_AssetList(); 
             initSearchbar(); 
-            loginDone = 1;
+            localStorage.loginDone = 1;
         },
-        function(){ loginDone = 1; }
+        function(){ localStorage.loginDone = 1; }
     ); 
 }
 
